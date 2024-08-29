@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="idd">
+      <h1>login</h1>
+      <div>username <input type="text" name="username" /></div>
+      <div>password <input type="password" name="password" /></div>
+      <button onclick="login2()">submit</button>
+    </div>
+    <div id="ioo" class="hidden">
+      <button onclick="getUser2()">GetUser</button>
+      <button>Logout</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const login = async () => {
+        try {
+          const username = document.querySelector("input[name=username]").value;
+          const password = document.querySelector("input[name=password]").value;
+          const response = await axios.post(
+            "http://localhost:3002/auth/login",
+            {
+              username,
+              password,
+            }
+          );
+          console.log(response.data.token);
+          localStorage.setItem("token", response.data.token);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      async function login2() {
+        try {
+          const username = document.querySelector("input[name=username]").value;
+          const password = document.querySelector("input[name=password]").value;
+          const response = await axios.post(
+            "http://localhost:3002/auth/login",
+            {
+              username,
+              password,
+            },
+            {
+              withCredentials: true
+            }
+          );
+          console.log(response.data);
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      const getUser = async () => {
+        try {
+          const AuthToken = localStorage.getItem("token");
+          const response = await axios.get("http://localhost:3002/auth/users", {
+            headers: {
+              authorization: `Bearer ${AuthToken}`,
+            },
+          });
+          console.log(response.data);
+      
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      const getUser2 = async () => {
+        try {
+          const AuthToken = localStorage.getItem("token");
+          const response = await axios.get("http://localhost:3002/auth/users", {
+           withCredentials: true
+          });
+          console.log(response.data);
+      
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      const idd = document.querySelector("#idd");
+      const ioo = document.querySelector("#ioo");
+      const token = localStorage.getItem("token");
+      
+      if (token) {
+        idd.classList.add("hidden");
+        ioo.classList.remove("hidden");
+      } else {
+        idd.classList.remove("hidden");
+        ioo.classList.add("hidden");
+      }
+    </script>
+  </body>
+</html>
